@@ -9,6 +9,7 @@ from services import google_calendar as gc
 from services.contest_service import (
     Status,
     day_label,
+    escape_markdown,
     format_clock,
     format_range,
     group_by_status,
@@ -44,6 +45,7 @@ def render_sync_result(result: SyncResult) -> None:
     lines += [f"✗ Calendar: {name}: {e}" for name, e in result.failed.items()]
     if result.calendar_error:
         lines.append(f"✗ Calendar: {result.calendar_error}")
+    lines = [escape_markdown(line) for line in lines]
 
     has_errors = bool(result.source_errors or result.failed or result.calendar_error)
     box = st.warning if has_errors else st.success
@@ -53,8 +55,8 @@ def render_sync_result(result: SyncResult) -> None:
 def render_card(contest: Contest, status: Status, color: str, synced: bool, now: datetime) -> None:
     with st.container(border=True):
         info, action = st.columns([5, 1], vertical_alignment="center")
-        info.markdown(f"**{contest.name}**  :{color}-badge[{status.value}]")
-        info.caption(f"{contest.platform} · {format_range(contest)}")
+        info.markdown(f"**{escape_markdown(contest.name)}**  :{color}-badge[{status.value}]")
+        info.caption(f"{escape_markdown(contest.platform)} · {format_range(contest)}")
         if status is Status.LIVE:
             info.caption(f"Started {format_clock(contest.start_time)} · ends {format_clock(contest.end_time)}")
         info.caption("📅 In Google Calendar" if synced else "⏳ Not in Google Calendar")

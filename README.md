@@ -93,6 +93,10 @@ The scheduled sync never opens a browser. If your Google login has expired, the 
 
 - While your Google OAuth app is in **Testing** mode, Google expires the login after 7 days, so
   reconnect about weekly. Publishing the app (Audience page) removes this limit if that option is available to you.
+- The dashboard listens on `localhost` only (`.streamlit/config.toml`), so other devices on your network can't
+  open it. Don't change `server.address` unless you understand the risk: anyone who can reach it can trigger a sync.
+- `token.json` gives access to your calendar events. Keep it private and delete it to disconnect
+  (you can also revoke access at https://myaccount.google.com/permissions).
 - Never commit `.env`, `credentials.json`, `token.json` or `data/*.db` (all in `.gitignore`).
 - Add a platform: create a class in `sources/` that implements `ContestSource.fetch()` and register it in
   `default_sources()` in `sync.py`.

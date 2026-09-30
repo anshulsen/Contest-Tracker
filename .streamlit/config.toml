@@ -1,0 +1,7 @@
+[server]
+# Only reachable from this computer, not from other devices on the network.
+address = "localhost"
+headless = true
+
+[browser]
+gatherUsageStats = false

@@ -1,3 +1,4 @@
+import re
 from datetime import date, datetime, timedelta, timezone
 from enum import Enum
 from zoneinfo import ZoneInfo
@@ -36,6 +37,11 @@ def group_by_status(
     groups[Status.UPCOMING].sort(key=lambda c: c.start_time)
     groups[Status.COMPLETED].sort(key=lambda c: c.end_time, reverse=True)
     return groups
+
+
+def escape_markdown(text: str) -> str:
+    """Neutralize Markdown/LaTeX/directive syntax in text that comes from external APIs."""
+    return re.sub(r"([\\`*_{}\[\]()#+\-.!|<>~:$&])", r"\\\1", text)
 
 
 def local_date(dt: datetime, tz: ZoneInfo = config.LOCAL_TZ) -> date:

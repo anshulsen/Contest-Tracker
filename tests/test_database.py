@@ -40,6 +40,12 @@ class DatabaseTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             Contest("x:1", "x", "n", s, s, "u")
 
+    def test_non_http_urls_rejected(self) -> None:
+        s = datetime(2030, 1, 1, tzinfo=timezone.utc)
+        for bad in ("javascript:alert(1)", "file:///etc/passwd", "data:text/html,x", "//evil.com", ""):
+            with self.assertRaises(ValueError, msg=bad):
+                Contest("x:1", "x", "n", s, s + timedelta(hours=1), bad)
+
     def test_roundtrip_preserves_timezone(self) -> None:
         c = sample()
         db.upsert_contest(c, self.path)

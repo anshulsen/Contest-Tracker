@@ -7,7 +7,17 @@ from zoneinfo import ZoneInfo
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from models import Contest
-from services.contest_service import Status, day_label, format_range, get_status, group_by_status, time_ago
+import re
+
+from services.contest_service import (
+    Status,
+    day_label,
+    escape_markdown,
+    format_range,
+    get_status,
+    group_by_status,
+    time_ago,
+)
 
 IST = ZoneInfo("Asia/Kolkata")
 # 2030-01-01 10:00 IST
@@ -79,6 +89,14 @@ class FormatTests(unittest.TestCase):
     def test_format_range_multi_day(self) -> None:
         c = make(datetime(2030, 1, 1, 14, 35, tzinfo=timezone.utc), hours=30)
         self.assertEqual(format_range(c, IST), "Tue, 01 Jan 08:05 PM - Thu, 03 Jan 02:05 AM")
+
+    def test_escape_markdown_neutralizes_injection(self) -> None:
+        hostile = "[click](http://evil.com) ![x](http://track.com/p.png) :red[hi] $$x$$ <b>a</b> `c` **b**"
+        escaped = escape_markdown(hostile)
+        self.assertIsNone(re.search(r"(?<!\\)[\[\]()<>`*$:]", escaped))
+
+    def test_escape_markdown_keeps_text_readable(self) -> None:
+        self.assertEqual(escape_markdown("Round 1"), "Round 1")
 
     def test_time_ago(self) -> None:
         self.assertEqual(time_ago(NOW - timedelta(seconds=10), NOW), "just now")

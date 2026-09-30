@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from datetime import datetime, timezone
+from urllib.parse import urlparse
 
 
 @dataclass(frozen=True)
@@ -21,6 +22,9 @@ class Contest:
             object.__setattr__(self, field_name, value.astimezone(timezone.utc))
         if self.end_time <= self.start_time:
             raise ValueError("end_time must be after start_time")
+        parsed = urlparse(self.url)
+        if parsed.scheme not in {"http", "https"} or not parsed.netloc:
+            raise ValueError(f"url must be an http(s) link, got {self.url!r}")
 
 
 def make_contest_id(platform: str, source_id: str | int) -> str:
