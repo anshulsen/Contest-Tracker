@@ -1,5 +1,4 @@
 # Contest Tracker
-> 🤖 **Vibe Coded:** Built with AI-assisted development.
 A small personal tool that fetches upcoming programming contests, adds them to **your own Google
 Calendar** with a reminder, and shows a simple dashboard. Contests are never added twice.
 
